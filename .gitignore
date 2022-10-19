@@ -1,0 +1,6 @@
+node_modules
+.env
+*.csv
+pars*.json
+completed.txt
+error.txt

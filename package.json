@@ -1,0 +1,24 @@
+{
+  "name": "embed-count",
+  "version": "1.0.0",
+  "description": "",
+  "main": "count.ts",
+  "scripts": {
+    "count": "ts-node count.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dblatcher",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.2",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@types/node": "^18.7.23",
+    "bottleneck": "^2.19.5",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.0.2",
+    "node-fetch": "2",
+    "ts-node": "^10.9.1"
+  }
+}
