@@ -4,7 +4,7 @@
   "description": "",
   "main": "count.ts",
   "scripts": {
-    "count": "ts-node count.ts",
+    "count": "ts-node ./src/count.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "dblatcher",

@@ -1,9 +1,9 @@
 import fetch from "node-fetch";
 import { endpoints } from "./endpoints";
 import { ArticeSearchCriteria } from "./definitions";
-import sections from "./sections.json";
-import identityNames from "./identityNames.json";
 import { buildUrl } from "./buildUrl";
+import sections from "../data/sections.json";
+import identityNames from "../data/identityNames.json";
 
 const sectionIds = sections.response.results.map((section) => section.id);
 const tagIds = identityNames.slice(0, 5).map((id) => `campaign/email/${id}`);
