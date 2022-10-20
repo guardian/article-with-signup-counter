@@ -5,9 +5,26 @@ import {
   buildTagAndSectionList,
   TagAndSection,
 } from "./buildTagAndSectionList";
+import { getSectionTotals } from "./getSectionTotals";
+import { toPercentage } from "./util";
+
+type DataOutput = Record<
+  string,
+  {
+    tagId: string;
+    total: number;
+    sections: Record<
+      string,
+      {
+        count: number | undefined;
+        percentage: string | undefined;
+      }
+    >;
+  }
+>;
 
 const CSV_FILENAME = "./results/list.csv";
-const JSON_FILENAME = "./results/datafromlist.json";
+const JSON_FILENAME = "./results/datafromlist.percent.json";
 const dateRange = {
   fromDate: "2022-09-01",
   toDate: "2022-09-30",
@@ -67,15 +84,24 @@ const processResults = async (results: TagAndSectionCount[]) => {
   const errors = results.filter((result) => result.error);
   console.log("errors:", errors);
 
-  const data: Record<string, any> = {};
+  const sectionTotals = await getSectionTotals(dateRange);
+  const data: DataOutput = {};
 
   results.forEach((result) => {
-    const { tagId, count, sectionId, error } = result;
+    const { tagId, count, sectionId } = result;
+    const sectionTotal = sectionTotals[sectionId];
+
     if (!data[tagId]) {
-      data[tagId] = { tagId, sections: {} };
+      data[tagId] = { tagId, sections: {}, total: 0 };
     }
 
-    data[tagId].sections[sectionId] = count;
+    if (count) {
+      data[tagId].total = data[tagId].total + count;
+    }
+    data[tagId].sections[sectionId] = {
+      count,
+      percentage: toPercentage(count, sectionTotal),
+    };
   });
 
   writeFileSync(JSON_FILENAME, JSON.stringify(data, undefined, 1));
