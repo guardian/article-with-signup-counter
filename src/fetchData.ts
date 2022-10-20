@@ -1,12 +1,13 @@
 import fetch from "node-fetch";
 import { endpoints } from "./endpoints";
 import { buildUrl } from "./buildUrl";
-import { buildSearchCriteria } from "./buildSearchCriteria";
+import {
+  buildSearchCriteria,
+  SearchCriteriaInput,
+} from "./buildSearchCriteria";
 import sections from "../data/sections.json";
 
-
 const sectionIds = sections.response.results.map((section) => section.id);
-
 
 type TagAndSectionCount = {
   sectionId: string;
@@ -25,13 +26,10 @@ export type TagCountBySection = {
 };
 
 const getCountForSectionAndTag = async (
-  sectionId: string,
-  tagId: string
+  input: SearchCriteriaInput
 ): Promise<TagAndSectionCount> => {
-  const url = buildUrl(
-    endpoints.search,
-    buildSearchCriteria({ sectionId, tagId })
-  );
+  const { sectionId = "", tagId = "" } = input;
+  const url = buildUrl(endpoints.search, buildSearchCriteria(input));
 
   try {
     const response = await fetch(url);
@@ -69,12 +67,13 @@ const getCountForSectionAndTag = async (
 };
 
 export const getCountForAllSections = async (
-  tagId: string
+  input: SearchCriteriaInput
 ): Promise<TagCountBySection> => {
+  const { tagId = "" } = input;
   const resultList = await Promise.all(
-    sectionIds.map((sectionId) => getCountForSectionAndTag(sectionId, tagId))
+    sectionIds.map((sectionId) => getCountForSectionAndTag({...input, sectionId}))
   );
-  const map: Partial<Record<string, number>> = {};
+  const sectionMap: Partial<Record<string, number>> = {};
   let total = 0;
   let hasErrors = false;
 
@@ -83,7 +82,7 @@ export const getCountForAllSections = async (
       total += result.count;
     }
 
-    map[result.sectionId] = result.count;
+    sectionMap[result.sectionId] = result.count;
 
     if (result.error) {
       hasErrors = true;
@@ -95,7 +94,7 @@ export const getCountForAllSections = async (
     total,
     hasErrors,
     setions: {
-      ...map,
+      ...sectionMap,
     },
   };
 };
