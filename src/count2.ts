@@ -1,15 +1,16 @@
 import { getCountForSectionAndTag, TagAndSectionCount } from "./fetchData";
 import Bottleneck from "bottleneck";
 import { appendFileSync, writeFileSync } from "fs";
-import { buildTagAndSectionList, TagAndSection } from "./buildTagAndSectionList";
+import {
+  buildTagAndSectionList,
+  TagAndSection,
+} from "./buildTagAndSectionList";
 
 const FILENAME = "./results/list.csv";
 const dateRange = {
   fromDate: "2022-09-01",
   toDate: "2022-09-01",
 };
-
-
 
 const results: TagAndSectionCount[] = [];
 
@@ -25,12 +26,12 @@ const getDataAndUse = async (tagAndSection: TagAndSection) => {
 
   if (result.error) {
     console.warn(output);
-    throw result.error
+    throw result.error;
   }
 
   results.push(result);
-  if (results.length % 100 === 0) {
-    console.log(results.length);
+  if (results.length % 10 === 0) {
+    console.log(results.length, Date.now());
   }
 
   appendFileSync(FILENAME, output);
@@ -40,7 +41,10 @@ const scheduleAndWaitIdle = async (list: TagAndSection[]) => {
   // create a simple limiter using https://github.com/SGrondin/bottleneck
   const limiter = new Bottleneck({
     maxConcurrent: 100,
-    minTime: 20,
+    minTime: 50,
+    reservoir: 100,
+    reservoirRefreshInterval: 5000,
+    reservoirRefreshAmount: 100,
   });
 
   for (const tagAndSection of list) {
