@@ -41,9 +41,9 @@ const scheduleAndWaitIdle = async (list: TagAndSection[]) => {
   // create a simple limiter using https://github.com/SGrondin/bottleneck
   const limiter = new Bottleneck({
     maxConcurrent: 100,
-    minTime: 50,
+    minTime: 35,
     reservoir: 100,
-    reservoirRefreshInterval: 5000,
+    reservoirRefreshInterval: 4000,
     reservoirRefreshAmount: 100,
   });
 
