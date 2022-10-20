@@ -1,6 +1,9 @@
+import { config } from "dotenv";
 import { RequestCriteria } from "./definitions";
 
-const apiKey = process.env.REACT_APP_CAPI_KEY || "test";
+config();
+
+const apiKey = process.env.CAPI_KEY || "test";
 
 export function buildUrl(endpoint: string, criteria: RequestCriteria = {}) {
   const url = new URL(endpoint);
