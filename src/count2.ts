@@ -6,13 +6,15 @@ import {
   TagAndSection,
 } from "./buildTagAndSectionList";
 
-const FILENAME = "./results/list.csv";
+const CSV_FILENAME = "./results/list.csv";
+const JSON_FILENAME = "./results/datafromlist.json";
 const dateRange = {
   fromDate: "2022-09-01",
-  toDate: "2022-09-01",
+  toDate: "2022-09-30",
 };
 
-const scheduleAndWaitIdle = async (list: TagAndSection[]) => {
+const fetchResultsAndOutputCsv = async (list: TagAndSection[]) => {
+  writeFileSync(CSV_FILENAME, "tagId,SectionId,count,error");
   const results: TagAndSectionCount[] = [];
 
   const getDataAndUse = async (tagAndSection: TagAndSection) => {
@@ -27,7 +29,6 @@ const scheduleAndWaitIdle = async (list: TagAndSection[]) => {
 
     if (result.error) {
       console.warn(output);
-      throw result.error;
     }
 
     results.push(result);
@@ -35,7 +36,7 @@ const scheduleAndWaitIdle = async (list: TagAndSection[]) => {
       console.log(results.length, Date.now());
     }
 
-    appendFileSync(FILENAME, output);
+    appendFileSync(CSV_FILENAME, output);
   };
 
   // create a simple limiter using https://github.com/SGrondin/bottleneck
@@ -58,10 +59,28 @@ const scheduleAndWaitIdle = async (list: TagAndSection[]) => {
     });
   });
 
-  const errors = results.filter((result) => result.error);
   console.log("finished");
-  console.log("errors:", errors);
+  return results;
 };
 
-writeFileSync(FILENAME, "tagId,SectionId,count,error");
-scheduleAndWaitIdle(buildTagAndSectionList());
+const processResults = async (results: TagAndSectionCount[]) => {
+  const errors = results.filter((result) => result.error);
+  console.log("errors:", errors);
+
+  const data: Record<string, any> = {};
+
+  results.forEach((result) => {
+    const { tagId, count, sectionId, error } = result;
+    if (!data[tagId]) {
+      data[tagId] = { tagId, sections: {} };
+    }
+
+    data[tagId].sections[sectionId] = count;
+  });
+
+  writeFileSync(JSON_FILENAME, JSON.stringify(data, undefined, 1));
+};
+
+const jobList = buildTagAndSectionList();
+
+fetchResultsAndOutputCsv(jobList).then(processResults);
