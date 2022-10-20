@@ -9,7 +9,7 @@ import sections from "../data/sections.json";
 
 const sectionIds = sections.response.results.map((section) => section.id);
 
-type TagAndSectionCount = {
+export type TagAndSectionCount = {
   sectionId: string;
   tagId: string;
   count?: number;
@@ -25,7 +25,7 @@ export type TagCountBySection = {
   };
 };
 
-const getCountForSectionAndTag = async (
+export const getCountForSectionAndTag = async (
   input: SearchCriteriaInput
 ): Promise<TagAndSectionCount> => {
   const { sectionId = "", tagId = "" } = input;
