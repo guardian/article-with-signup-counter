@@ -1,8 +1,12 @@
 import identityNames from "../data/identityNames.json";
-import sections from "../data/sections.json";
+import sectionCount from "../data/sectionCounts2022.json";
+
+const sectionIds = Object.entries(sectionCount)
+  .filter((entry) => entry[1] > 0)
+  .map((entry) => entry[0]);
 
 const tagIds = identityNames.map((id) => `campaign/email/${id}`);
-const sectionIds = sections.response.results.map((section) => section.id);
+
 
 export type TagAndSection = {
   tagId: string;
