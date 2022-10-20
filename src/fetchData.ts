@@ -3,6 +3,8 @@ import { endpoints } from "./endpoints";
 import { buildUrl } from "./buildUrl";
 import {
   buildSearchCriteria,
+  buildSearchCriteriaForOldEmbed,
+  OldEmbedSearchCriteriaInput,
   SearchCriteriaInput,
 } from "./buildSearchCriteria";
 import sections from "../data/sections.json";
@@ -12,6 +14,13 @@ const sectionIds = sections.response.results.map((section) => section.id);
 export type TagAndSectionCount = {
   sectionId: string;
   tagId: string;
+  count?: number;
+  error?: string;
+};
+
+export type embedAndSectionCount = {
+  sectionId: string;
+  embedPath: string;
   count?: number;
   error?: string;
 };
@@ -66,12 +75,55 @@ export const getCountForSectionAndTag = async (
   }
 };
 
+export const getCountForOldEmbedAndSection = async (
+  input: OldEmbedSearchCriteriaInput
+): Promise<embedAndSectionCount> => {
+  const { sectionId = "", embedPath = "" } = input;
+  const url = buildUrl(endpoints.search, buildSearchCriteriaForOldEmbed(input));
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    let count: undefined | number = undefined;
+    let error: undefined | string = undefined;
+    if (data.response && typeof data.response.total === "number") {
+      count = data.response.total;
+    } else if (data.response && data.response.status === "error") {
+      console.log(input, data.response.message);
+      error = data.response.message;
+    } else if (!response.ok) {
+      error = `error: ${response.status}, ${response.statusText}`;
+    } else {
+      error = "UNKNOWN_ERROR";
+      console.log(data);
+    }
+
+    return {
+      sectionId,
+      embedPath,
+      count,
+      error,
+    };
+  } catch (error) {
+    console.warn({ sectionId, embedPath }, error);
+
+    return {
+      sectionId,
+      embedPath,
+      count: undefined,
+    };
+  }
+};
+
 export const getCountForAllSections = async (
   input: SearchCriteriaInput
 ): Promise<TagCountBySection> => {
   const { tagId = "" } = input;
   const resultList = await Promise.all(
-    sectionIds.map((sectionId) => getCountForSectionAndTag({...input, sectionId}))
+    sectionIds.map((sectionId) =>
+      getCountForSectionAndTag({ ...input, sectionId })
+    )
   );
   const sectionMap: Partial<Record<string, number>> = {};
   let total = 0;

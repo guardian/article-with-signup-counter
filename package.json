@@ -5,6 +5,7 @@
   "main": "count.ts",
   "scripts": {
     "count": "ts-node ./src/count2.ts",
+    "count-old": "ts-node ./src/countOldEmbed.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "dblatcher",

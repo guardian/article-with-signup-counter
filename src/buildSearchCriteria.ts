@@ -16,3 +16,23 @@ export const buildSearchCriteria = (
   tag: input.tagId,
   section: input.sectionId,
 });
+
+export type OldEmbedSearchCriteriaInput = {
+  sectionId?: string;
+  embedPath?: string;
+  fromDate?: string;
+  toDate?: string;
+};
+
+const iframeClass = "email-sub__iframe";
+
+export const buildSearchCriteriaForOldEmbed = (
+  input: OldEmbedSearchCriteriaInput
+): ArticeSearchCriteria => ({
+  "from-date": input.fromDate,
+  "to-date": input.toDate,
+  "page-size": 0,
+  section: input.sectionId,
+  "query-fields": "body",
+  q: `"${input.embedPath}" AND ${iframeClass}`,
+});
