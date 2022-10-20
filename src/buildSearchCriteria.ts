@@ -34,5 +34,5 @@ export const buildSearchCriteriaForOldEmbed = (
   "page-size": 0,
   section: input.sectionId,
   "query-fields": "body",
-  q: `"${input.embedPath}" AND ${iframeClass}`,
+  q: input.embedPath ?  `"${input.embedPath}" AND ${iframeClass}` : undefined,
 });
