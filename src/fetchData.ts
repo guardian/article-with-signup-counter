@@ -8,6 +8,7 @@ import {
   SearchCriteriaInput,
 } from "./buildSearchCriteria";
 import sections from "../data/sections.json";
+import { get } from "https";
 
 const sectionIds = sections.response.results.map((section) => section.id);
 
@@ -34,45 +35,46 @@ export type TagCountBySection = {
   };
 };
 
+const getCountOrError = async (
+  url: URL
+): Promise<{ count?: number | undefined; error?: string | undefined }> => {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.response && typeof data.response.total === "number") {
+      return { count: data.response.total };
+    } else if (data.response && data.response.status === "error") {
+      return { error: data.response.message };
+    } else if (!response.ok) {
+      return { error: `error: ${response.status}, ${response.statusText}` };
+    } else {
+      return { error: "UNKNOWN_ERROR" };
+    }
+  } catch (fetchError) {
+    return { error: "FETCH_ERROR" };
+  }
+};
+
 export const getCountForSectionAndTag = async (
   input: SearchCriteriaInput
 ): Promise<TagAndSectionCount> => {
   const { sectionId = "", tagId = "" } = input;
   const url = buildUrl(endpoints.search, buildSearchCriteria(input));
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
+  const { error, count } = await getCountOrError(url);
 
-    let count: undefined | number = undefined;
-    let error: undefined | string = undefined;
-    if (data.response && typeof data.response.total === "number") {
-      count = data.response.total;
-    } else if (data.response && data.response.status === "error") {
-      console.log({ sectionId, tagId }, data.response.message);
-      error = data.response.message;
-    } else if (!response.ok) {
-      error = `error: ${response.status}, ${response.statusText}`;
-    } else {
-      error = "UNKNOWN_ERROR";
-      console.log(data);
-    }
-
-    return {
-      sectionId,
-      tagId,
-      count,
-      error,
-    };
-  } catch (error) {
-    console.warn({ sectionId, tagId }, error);
-
-    return {
-      sectionId,
-      tagId,
-      count: undefined,
-    };
+  if (error) {
+    console.log("failed:", input);
+    console.error(error);
   }
+
+  return {
+    sectionId,
+    tagId,
+    count,
+    error,
+  };
 };
 
 export const getCountForOldEmbedAndSection = async (
@@ -81,39 +83,19 @@ export const getCountForOldEmbedAndSection = async (
   const { sectionId = "", embedPath = "" } = input;
   const url = buildUrl(endpoints.search, buildSearchCriteriaForOldEmbed(input));
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    let count: undefined | number = undefined;
-    let error: undefined | string = undefined;
-    if (data.response && typeof data.response.total === "number") {
-      count = data.response.total;
-    } else if (data.response && data.response.status === "error") {
-      console.log(input, data.response.message);
-      error = data.response.message;
-    } else if (!response.ok) {
-      error = `error: ${response.status}, ${response.statusText}`;
-    } else {
-      error = "UNKNOWN_ERROR";
-      console.log(data);
-    }
-
-    return {
-      sectionId,
-      embedPath,
-      count,
-      error,
-    };
-  } catch (error) {
-    console.warn({ sectionId, embedPath }, error);
-
-    return {
-      sectionId,
-      embedPath,
-      count: undefined,
-    };
+  const { error, count } = await getCountOrError(url);
+  if (error) {
+    console.log("failed:", input);
+    console.error(error);
   }
+
+  return {
+    sectionId,
+    embedPath,
+    count,
+    error,
+  };
+
 };
 
 export const getCountForAllSections = async (
