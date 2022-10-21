@@ -1,18 +1,19 @@
 import { writeFileSync } from "fs";
 import embedPaths from "../data/embedSrc.json";
 import { getCountForOldEmbedAndSection } from "./fetchData";
-import { toPercentage } from "./util";
+import { stripLeading, toPercentage } from "./util";
 
-const FILENAME = "./results/old-embeds-september-22.json";
+const FILENAME = "./results/old-embeds-sections-june-22.json";
 
 const dateRange = {
-  fromDate: "2022-09-01",
-  toDate: "2022-09-30",
+  fromDate: "2022-06-01",
+  toDate: "2022-06-30",
 };
 
-const doQuery = async (embedPath: string) => {
+const doCount = async (embedPath: string, sectionId?: string) => {
   const criteriaInput = {
     embedPath,
+    sectionId,
     ...dateRange,
   };
   const result = await getCountForOldEmbedAndSection(criteriaInput);
@@ -20,13 +21,8 @@ const doQuery = async (embedPath: string) => {
   return result;
 };
 
-const stripLeading = (input: string) => {
-  const parts = input.split("/");
-  return parts[parts.length - 1];
-};
-
 console.log(FILENAME, dateRange);
-Promise.all(embedPaths.map((embedPath) => doQuery(embedPath))).then(
+Promise.all(embedPaths.map((embedPath) => doCount(embedPath))).then(
   async (results) => {
     const totalResult = await getCountForOldEmbedAndSection(dateRange);
 
