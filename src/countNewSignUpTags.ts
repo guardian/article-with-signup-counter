@@ -8,20 +8,19 @@ import {
 import { getSectionTotals } from "./getSectionTotals";
 import { toPercentage } from "./util";
 
-type DataOutput = Record<
-  string,
-  {
-    tagId: string;
-    total: number;
-    sections: Record<
-      string,
-      {
-        count: number | undefined;
-        percentage: string | undefined;
-      }
-    >;
-  }
->;
+type TagReport = {
+  tagId: string;
+  total: number;
+  sections: Record<
+    string,
+    {
+      count: number | undefined;
+      percentage: string | undefined;
+    }
+  >;
+};
+
+type DataOutput = Record<string, TagReport>;
 
 const CSV_FILENAME = "./results/list.csv";
 const JSON_FILENAME = "./results/datafromlist.percent.json";
