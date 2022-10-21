@@ -7,33 +7,22 @@ import {
   OldEmbedSearchCriteriaInput,
   SearchCriteriaInput,
 } from "./buildSearchCriteria";
-import sections from "../data/sections.json";
-import { get } from "https";
 
-const sectionIds = sections.response.results.map((section) => section.id);
 
 export type TagAndSectionCount = {
-  sectionId: string;
   tagId: string;
+  sectionId: string;
   count?: number;
   error?: string;
 };
 
-export type embedAndSectionCount = {
-  sectionId: string;
+export type EmbedAndSectionCount = {
   embedPath: string;
+  sectionId: string;
   count?: number;
   error?: string;
 };
 
-export type TagCountBySection = {
-  tagId: string;
-  total: number;
-  hasErrors: boolean;
-  setions: {
-    [x: string]: number | undefined;
-  };
-};
 
 const getCountOrError = async (
   url: URL
@@ -79,7 +68,7 @@ export const getCountForSectionAndTag = async (
 
 export const getCountForOldEmbedAndSection = async (
   input: OldEmbedSearchCriteriaInput
-): Promise<embedAndSectionCount> => {
+): Promise<EmbedAndSectionCount> => {
   const { sectionId = "", embedPath = "" } = input;
   const url = buildUrl(endpoints.search, buildSearchCriteriaForOldEmbed(input));
 
@@ -94,41 +83,5 @@ export const getCountForOldEmbedAndSection = async (
     embedPath,
     count,
     error,
-  };
-
-};
-
-export const getCountForAllSections = async (
-  input: SearchCriteriaInput
-): Promise<TagCountBySection> => {
-  const { tagId = "" } = input;
-  const resultList = await Promise.all(
-    sectionIds.map((sectionId) =>
-      getCountForSectionAndTag({ ...input, sectionId })
-    )
-  );
-  const sectionMap: Partial<Record<string, number>> = {};
-  let total = 0;
-  let hasErrors = false;
-
-  resultList.forEach((result) => {
-    if (typeof result.count === "number") {
-      total += result.count;
-    }
-
-    sectionMap[result.sectionId] = result.count;
-
-    if (result.error) {
-      hasErrors = true;
-    }
-  });
-
-  return {
-    tagId,
-    total,
-    hasErrors,
-    setions: {
-      ...sectionMap,
-    },
   };
 };
