@@ -4,7 +4,7 @@
   "description": "",
   "main": "count.ts",
   "scripts": {
-    "count": "ts-node ./src/countNewSignUpTags.ts",
+    "count-new": "ts-node ./src/countNewSignUpTagsBySection.ts",
     "count-old": "ts-node ./src/countOldEmbedBySection.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

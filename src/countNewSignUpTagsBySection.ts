@@ -8,6 +8,13 @@ import {
 import { getSectionTotals } from "./getSectionTotals";
 import { toPercentage } from "./util";
 
+const CSV_FILENAME = "./results/list.csv";
+const JSON_FILENAME = "./results/datafromlist.percent.json";
+const dateRange = {
+  fromDate: "2022-09-01",
+  toDate: "2022-09-30",
+};
+
 type TagReport = {
   tagId: string;
   total: number;
@@ -22,12 +29,6 @@ type TagReport = {
 
 type DataOutput = Record<string, TagReport>;
 
-const CSV_FILENAME = "./results/list.csv";
-const JSON_FILENAME = "./results/datafromlist.percent.json";
-const dateRange = {
-  fromDate: "2022-09-01",
-  toDate: "2022-09-30",
-};
 
 const fetchResultsAndOutputCsv = async (list: TagAndSection[]) => {
   writeFileSync(CSV_FILENAME, "tagId,SectionId,count,error");

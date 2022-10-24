@@ -7,7 +7,6 @@ import { toPercentage } from "./util";
 
 const JSON_FILENAME = "./results/old-embeds-sections-june-22.test.json";
 const CSV_FILENAME = "./results/old-embed-list.csv";
-
 const dateRange = {
   fromDate: "2022-06-01",
   toDate: "2022-06-30",
