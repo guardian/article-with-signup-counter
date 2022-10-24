@@ -1,6 +1,6 @@
 import sections from "../data/sections.json";
 import { SearchCriteriaInput } from "./buildSearchCriteria";
-import { TagAndSection } from "./buildTagAndSectionList";
+import { TagAndSection } from "./buildPairList";
 import { getCountForSectionAndTag } from "./fetchData";
 
 const sectionIds = sections.response.results.map((section) => section.id);

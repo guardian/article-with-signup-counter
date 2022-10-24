@@ -1,15 +1,20 @@
-import { getCountForSectionAndTag, TagAndSectionCount } from "./fetchData";
 import Bottleneck from "bottleneck";
 import { appendFileSync, writeFileSync } from "fs";
-import {
-  buildTagAndSectionList,
-  TagAndSection,
-} from "./buildPairList";
+import { buildEmbedAndSectionList, EmbedAndSection} from "./buildPairList";
+import { getCountForOldEmbedAndSection, EmbedAndSectionCount } from "./fetchData";
 import { getSectionTotals } from "./getSectionTotals";
 import { toPercentage } from "./util";
 
-type TagReport = {
-  tagId: string;
+const JSON_FILENAME = "./results/old-embeds-sections-june-22.test.json";
+const CSV_FILENAME = "./results/old-embed-list.csv";
+
+const dateRange = {
+  fromDate: "2022-06-01",
+  toDate: "2022-06-30",
+};
+
+type EmbedReport = {
+  embedPath: string;
   total: number;
   sections: Record<
     string,
@@ -20,26 +25,20 @@ type TagReport = {
   >;
 };
 
-type DataOutput = Record<string, TagReport>;
+type DataOutput = Record<string, EmbedReport>;
 
-const CSV_FILENAME = "./results/list.csv";
-const JSON_FILENAME = "./results/datafromlist.percent.json";
-const dateRange = {
-  fromDate: "2022-09-01",
-  toDate: "2022-09-30",
-};
 
-const fetchResultsAndOutputCsv = async (list: TagAndSection[]) => {
-  writeFileSync(CSV_FILENAME, "tagId,SectionId,count,error");
-  const results: TagAndSectionCount[] = [];
+const fetchResultsAndOutputCsv = async (list: EmbedAndSection[]) => {
+  writeFileSync(CSV_FILENAME, "embedPath,SectionId,count,error\n");
+  const results: EmbedAndSectionCount[] = [];
 
-  const getDataAndUse = async (tagAndSection: TagAndSection) => {
-    const result = await getCountForSectionAndTag({
+  const getDataAndUse = async (tagAndSection: EmbedAndSection) => {
+    const result = await getCountForOldEmbedAndSection({
       ...tagAndSection,
       ...dateRange,
     });
 
-    const output = `${result.tagId},${result.sectionId},${result.count},${
+    const output = `${result.embedPath},${result.sectionId},${result.count},${
       result.error || "OK"
     }\n`;
 
@@ -79,7 +78,7 @@ const fetchResultsAndOutputCsv = async (list: TagAndSection[]) => {
   return results;
 };
 
-const processResults = async (results: TagAndSectionCount[]) => {
+const processResults = async (results: EmbedAndSectionCount[]) => {
   const errors = results.filter((result) => result.error);
   console.log("errors:", errors);
 
@@ -87,17 +86,17 @@ const processResults = async (results: TagAndSectionCount[]) => {
   const data: DataOutput = {};
 
   results.forEach((result) => {
-    const { tagId, count, sectionId } = result;
+    const { embedPath, count, sectionId } = result;
     const sectionTotal = sectionTotals[sectionId];
 
-    if (!data[tagId]) {
-      data[tagId] = { tagId, sections: {}, total: 0 };
+    if (!data[embedPath]) {
+      data[embedPath] = { embedPath, sections: {}, total: 0 };
     }
 
     if (count) {
-      data[tagId].total = data[tagId].total + count;
+      data[embedPath].total = data[embedPath].total + count;
     }
-    data[tagId].sections[sectionId] = {
+    data[embedPath].sections[sectionId] = {
       count,
       percentage: toPercentage(count, sectionTotal),
     };
@@ -106,6 +105,5 @@ const processResults = async (results: TagAndSectionCount[]) => {
   writeFileSync(JSON_FILENAME, JSON.stringify(data, undefined, 1));
 };
 
-const jobList = buildTagAndSectionList();
-
-fetchResultsAndOutputCsv(jobList).then(processResults);
+const list = buildEmbedAndSectionList()
+fetchResultsAndOutputCsv(list).then(processResults)
