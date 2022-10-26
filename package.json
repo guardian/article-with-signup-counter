@@ -6,6 +6,7 @@
   "scripts": {
     "count-new": "ts-node ./src/countNewSignUpTagsBySection.ts",
     "count-old": "ts-node ./src/countOldEmbedBySection.ts",
+    "build-table-old": "ts-node ./src/makeSummaryTableOld.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "dblatcher",
