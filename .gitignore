@@ -3,3 +3,4 @@ node_modules
 *.csv
 pars*.json
 results
+tables
