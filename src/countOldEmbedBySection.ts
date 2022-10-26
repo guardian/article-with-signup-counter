@@ -1,15 +1,15 @@
 import Bottleneck from "bottleneck";
 import { appendFileSync, writeFileSync } from "fs";
-import { buildEmbedAndSectionList, EmbedAndSection} from "./buildPairList";
-import { getCountForOldEmbedAndSection, EmbedAndSectionCount } from "./fetchData";
-import { getSectionTotals } from "./getSectionTotals";
-import { toPercentage } from "./util";
+import { buildEmbedAndSectionList, EmbedAndSection} from "./modules/buildPairList";
+import { getCountForOldEmbedAndSection, EmbedAndSectionCount } from "./modules/fetchData";
+import { getSectionTotals } from "./modules/getSectionTotals";
+import { toPercentage } from "./modules/util";
 
-const JSON_FILENAME = "./results/old-embeds-sections-june-22.test.json";
+const JSON_FILENAME = "./results/old-embeds-sections-july-22.json";
 const CSV_FILENAME = "./results/old-embed-list.csv";
 const dateRange = {
-  fromDate: "2022-06-01",
-  toDate: "2022-06-30",
+  fromDate: "2022-07-01",
+  toDate: "2022-07-31",
 };
 
 type EmbedReport = {

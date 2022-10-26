@@ -1,15 +1,15 @@
-import { getCountForSectionAndTag, TagAndSectionCount } from "./fetchData";
+import { getCountForSectionAndTag, TagAndSectionCount } from "./modules/fetchData";
 import Bottleneck from "bottleneck";
 import { appendFileSync, writeFileSync } from "fs";
 import {
   buildTagAndSectionList,
   TagAndSection,
-} from "./buildPairList";
-import { getSectionTotals } from "./getSectionTotals";
-import { toPercentage } from "./util";
+} from "./modules/buildPairList";
+import { getSectionTotals } from "./modules/getSectionTotals";
+import { toPercentage } from "./modules/util";
 
 const CSV_FILENAME = "./results/list.csv";
-const JSON_FILENAME = "./results/datafromlist.percent.json";
+const JSON_FILENAME = "./results/new-embeds-percent-september.json";
 const dateRange = {
   fromDate: "2022-09-01",
   toDate: "2022-09-30",

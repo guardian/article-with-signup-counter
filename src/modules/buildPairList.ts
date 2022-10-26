@@ -1,6 +1,6 @@
-import identityNames from "../data/identityNames.json";
-import sectionCount from "../data/sectionCounts2022.json";
-import embedPaths from "../data/embedSrc.json";
+import identityNames from "../../data/identityNames.json";
+import sectionCount from "../../data/sectionCounts2022.json";
+import embedPaths from "../../data/embedSrc.json";
 
 const sectionIds = Object.entries(sectionCount)
   .filter((entry) => entry[1] > 0)

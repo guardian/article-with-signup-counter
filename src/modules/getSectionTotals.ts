@@ -1,4 +1,4 @@
-import sections from "../data/sections.json";
+import sections from "../../data/sections.json";
 import { SearchCriteriaInput } from "./buildSearchCriteria";
 import { TagAndSection } from "./buildPairList";
 import { getCountForSectionAndTag } from "./fetchData";

@@ -1,7 +1,7 @@
 import { writeFileSync } from "fs";
 import embedPaths from "../data/embedSrc.json";
-import { getCountForOldEmbedAndSection } from "./fetchData";
-import { stripLeading, toPercentage } from "./util";
+import { getCountForOldEmbedAndSection } from "./modules/fetchData";
+import { stripLeading, toPercentage } from "./modules/util";
 
 const FILENAME = "./results/old-embeds-sections-june-22.json";
 
