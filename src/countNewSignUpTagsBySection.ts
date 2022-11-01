@@ -9,10 +9,10 @@ import { getSectionTotals } from "./modules/getSectionTotals";
 import { toPercentage } from "./modules/util";
 
 const CSV_FILENAME = "./results/list.csv";
-const JSON_FILENAME = "./results/new-embeds-percent-september.json";
+const JSON_FILENAME = "./results/new-embeds-percent-october.json";
 const dateRange = {
-  fromDate: "2022-09-01",
-  toDate: "2022-09-30",
+  fromDate: "2022-10-01",
+  toDate: "2022-10-31",
 };
 
 type TagReport = {
@@ -22,6 +22,7 @@ type TagReport = {
     string,
     {
       count: number | undefined;
+      sectionTotal: number | undefined;
       percentage: string | undefined;
     }
   >;
@@ -100,6 +101,7 @@ const processResults = async (results: TagAndSectionCount[]) => {
     }
     data[tagId].sections[sectionId] = {
       count,
+      sectionTotal,
       percentage: toPercentage(count, sectionTotal),
     };
   });

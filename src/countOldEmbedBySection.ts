@@ -5,11 +5,11 @@ import { getCountForOldEmbedAndSection, EmbedAndSectionCount } from "./modules/f
 import { getSectionTotals } from "./modules/getSectionTotals";
 import { toPercentage } from "./modules/util";
 
-const JSON_FILENAME = "./results/old-embeds-sections-july-22.json";
+const JSON_FILENAME = "./results/old-embeds-sections-october-22.json";
 const CSV_FILENAME = "./results/old-embed-list.csv";
 const dateRange = {
-  fromDate: "2022-07-01",
-  toDate: "2022-07-31",
+  fromDate: "2022-10-01",
+  toDate: "2022-10-31",
 };
 
 type EmbedReport = {
@@ -19,6 +19,7 @@ type EmbedReport = {
     string,
     {
       count: number | undefined;
+      sectionTotal: number | undefined;
       percentage: string | undefined;
     }
   >;
@@ -97,6 +98,7 @@ const processResults = async (results: EmbedAndSectionCount[]) => {
     }
     data[embedPath].sections[sectionId] = {
       count,
+      sectionTotal,
       percentage: toPercentage(count, sectionTotal),
     };
   });
